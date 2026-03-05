@@ -20,28 +20,39 @@ Agent: [generates Deployment, Service, Ingress YAML; validates locally]
 
 ## Quick Start
 
-### 1. Clone and add to your workspace
+### Option A: Install as a Cursor skill (recommended)
+
+Install globally so the skill is available in every workspace:
 
 ```bash
-git clone https://github.com/tgpski/directed-workflows.git
+git clone https://github.com/tgpski/directed-workflows.git ~/.cursor/skills/directed-workflows
 ```
 
-Open your AI IDE (Cursor, VS Code with Claude/Copilot, Windsurf) and add **both** this repo and your target repo to the same workspace.
+Or install at the project level for a single repo:
 
-### 2. Ask the agent to create a workflow
+```bash
+git clone https://github.com/tgpski/directed-workflows.git .cursor/skills/directed-workflows
+```
 
-Start a new agent session and describe the process you want to encode:
+Once installed, start a new agent session and describe the process you want to encode:
 
 ```
 I want a directed workflow for onboarding new Helm charts to our platform.
 The process takes about a week, produces 3 PRs, and involves creating a
 Chart.yaml, values files per environment, and a CI pipeline config.
-Use the directed-workflows repo as the pattern reference.
 ```
 
-The agent reads `AGENTS.md`, studies the examples and templates, analyzes your repo's structure, and generates workflow files tailored to your conventions.
+The agent reads `SKILL.md`, studies the examples and templates, analyzes your repo's structure, and generates workflow files tailored to your conventions.
 
-### 3. Review the output
+### Option B: Add to workspace (any AI IDE)
+
+```bash
+git clone https://github.com/tgpski/directed-workflows.git
+```
+
+Open your AI IDE (Cursor, VS Code with Claude/Copilot, Windsurf) and add **both** this repo and your target repo to the same workspace. The agent reads `AGENTS.md` (which points to `SKILL.md`) for full instructions.
+
+### Review the output
 
 The agent creates files in your target repo:
 
@@ -56,7 +67,7 @@ your-repo/.agents/commands/
 
 Review the generated workflows like any other PR. The workflow files are version-controlled alongside the config they produce.
 
-### 4. Use the workflow
+### Use the workflow
 
 Invoke the workflow from your target repo:
 
@@ -111,8 +122,10 @@ Workflow files specify *what information is needed*, not *who answers*. The same
 
 ```
 directed-workflows/
-├── README.md                          # You are here (includes router pattern deep-dive)
-├── AGENTS.md                          # Agent instructions for generating workflows
+├── SKILL.md                           # Skill entry point -- agent instructions for generating workflows
+├── AGENTS.md                          # Thin redirect to SKILL.md (for non-Cursor IDEs)
+├── README.md                          # You are here
+├── ROUTER_PATTERN.md                  # Multi-phase router pattern deep-dive
 ├── examples/
 │   ├── kubernetes-onboarding/         # 4-phase example (full router demo)
 │   │   ├── onboard-service.md         # Router (entry point)
@@ -166,13 +179,25 @@ If you prefer to write workflows by hand:
 
 ## IDE Integration
 
-Directed workflows work with any AI IDE that supports referencing files. Place workflows in `.agents/commands/` and symlink to tool-specific directories:
+### Cursor (skill-based)
+
+Install as a global skill and the agent can generate workflows in any workspace:
 
 ```bash
-# Cursor
-ln -s ../../.agents/commands/onboard-service.md .cursor/commands/onboard-service.md
+git clone https://github.com/tgpski/directed-workflows.git ~/.cursor/skills/directed-workflows
+```
 
-# Claude Code
+Generated workflows live in your repo at `.agents/commands/` and can be symlinked for slash-command access:
+
+```bash
+ln -s ../../.agents/commands/onboard-service.md .cursor/commands/onboard-service.md
+```
+
+### Claude Code and other IDEs
+
+Clone the repo and add it to your workspace alongside the target repo. The agent reads `AGENTS.md`, which points to `SKILL.md` for full instructions.
+
+```bash
 ln -s ../../.agents/commands/onboard-service.md .claude/commands/onboard-service.md
 ```
 
@@ -202,7 +227,7 @@ One source of truth, multiple entry points.
 ## Further Reading
 
 - [The Multi-Phase Router Pattern](./ROUTER_PATTERN.md)
-- [AGENTS.md](AGENTS.md) -- instructions the agent reads when generating workflows for your repo
+- [SKILL.md](SKILL.md) -- instructions the agent reads when generating workflows
 - [Agent Skills Standard](https://agentskills.io/) -- the adjacent open standard for single-invocation agent capabilities
 
 ## License
@@ -211,4 +236,4 @@ Apache 2.0
 
 ## Author
 
-Tyler Pate ([@TGPSKI(https://github.com/tgpski)), 2026
+Tyler Pate ([@TGPSKI](https://github.com/tgpski)), 2026
