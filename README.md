@@ -1,223 +1,214 @@
 # Directed Workflows
 
-**Directed Workflows** is a **command pattern** for encoding complex infrastructure procedures as **interactive, validated, agent-driven workflows** using structured prompts and repository context.
+**Markdown files that turn AI coding agents into interactive platform experts.**
 
-It turns brittle documentation, tribal knowledge, and error-prone manual processes into **guided execution paths** that scale expertise without freezing it into scripts or UIs.
+Directed workflows encode multi-step configuration processes -- onboarding a service, setting up monitoring, migrating environments -- as markdown files that AI agents execute interactively. The agent asks questions, inspects your repo, and generates valid configuration. The human provides the inputs that require judgment.
 
----
+```
+User: @onboard-service.md
 
-## Why Directed Workflows Exist
+Agent: "What is the name of your service?"
+User: "payment-gateway"
 
-Modern infrastructure tasks often fail not because they are impossible—but because they sit behind a **knowledge barrier**.
+Agent: [inspects repo]
+       "Namespace exists, no Deployment found. You're at Phase 2. Continue?"
+User: "Yes"
 
-Common symptoms:
-
-* Complex, multi-step procedures that require deep system knowledge
-* Long time-to-completion for first-time or infrequent users
-* High error rates due to missing context or undocumented conventions
-* Dependency on a small set of experts to unblock progress
-* Documentation that is outdated, incomplete, or assumes prior familiarity
-* Scripts that are brittle and fail outside the “happy path”
-
-Directed Workflows address the gap between:
-
-> **What a user needs to accomplish**
-> and
-> **The knowledge required to do it correctly**
-
----
-
-## What This Pattern Is (and Is Not)
-
-### ✅ What it is
-
-* A **workflow command pattern**, not a product or platform
-* **Agent-first**, designed to run inside tools like Cursor, Claude, or other agentic IDEs
-* **Repository-aware**, using real schemas, examples, and conventions
-* **Human-guided**, not fully autonomous
-* **Continuously validated**, not “run it and hope CI catches it”
-
-### ❌ What it is not
-
-* Not a wizard-based UI
-* Not a custom CLI tool
-* Not a chatbot with canned responses
-* Not a replacement for documentation (docs are inputs, not outputs)
-
----
-
-## Core Idea
-
-Encode domain expertise directly into **workflow commands** that guide a human through complex tasks step-by-step, using:
-
-* Interactive prompting
-* Progressive disclosure
-* Repository context exploration
-* Continuous validation
-* Optional integration with external systems
-
-The agent becomes a **guided execution partner**, not a guesser.
-
----
-
-## How It Works
-
-### High-Level Flow
-
-1. User invokes a workflow command
-2. Agent loads the command definition
-3. Agent asks a simple entry-point question
-4. Agent explores repository context (schemas, examples, patterns)
-5. Agent guides the user through each step
-6. Files are created or updated incrementally
-7. Validation occurs at each stage
-8. Final validation confirms completion
-
----
-
-## Command Definition Format
-
-Workflow commands are defined as **Markdown files with YAML frontmatter**.
-
-They are:
-
-* Human-readable
-* Version-controlled
-* Easy to edit and review
-* Discoverable by agents
-
-### Example Structure
-
-```markdown
----
-description: Brief description of the command purpose
-globs: [optional file patterns to scope command]
-alwaysApply: false
----
-# Command Title
-
-## Entry Point
-**Ask user first**: Simple question that unlocks maximum context
-
-## Workflow Steps
-### Step 1: Step name
-Instructions, templates, examples, and validation criteria
-
-### Step 2: Step name
-...
-
-## Output
-Files or artifacts produced by the workflow
-
-## Validation
-How correctness is validated (schemas, commands, checks)
-
-## Examples
-References to existing examples in the repository
+Agent: [generates Deployment, Service, Ingress YAML; validates locally]
+       "Resources created and validated. Ready for PR."
 ```
 
----
+## Quick Start
 
-## Design Principles
+### 1. Clone and add to your workspace
 
-### 1. Interactive Prompting
+```bash
+git clone https://github.com/tgpski/directed-workflows.git
+```
 
-Commands explicitly request key information instead of assuming it.
+Open your AI IDE (Cursor, VS Code with Claude/Copilot, Windsurf) and add **both** this repo and your target repo to the same workspace.
 
-**Result:** Fewer errors, higher confidence, better outcomes.
+### 2. Ask the agent to create a workflow
 
----
+Start a new agent session and describe the process you want to encode:
 
-### 2. Entry-Point Simplicity
+```
+I want a directed workflow for onboarding new Helm charts to our platform.
+The process takes about a week, produces 3 PRs, and involves creating a
+Chart.yaml, values files per environment, and a CI pipeline config.
+Use the directed-workflows repo as the pattern reference.
+```
 
-Each workflow starts with the *smallest possible question* that unlocks maximum context.
+The agent reads `AGENTS.md`, studies the examples and templates, analyzes your repo's structure, and generates workflow files tailored to your conventions.
 
-**Result:** Low cognitive load, immediate traction.
+### 3. Review the output
 
----
+The agent creates files in your target repo:
 
-### 3. Progressive Disclosure
+```
+your-repo/.agents/commands/
+├── onboard-chart.md                # Router (entry point)
+└── onboard-chart/
+    ├── phase-1-scaffold.md         # Chart.yaml, base values
+    ├── phase-2-environments.md     # Per-env values files
+    └── phase-3-pipeline.md         # CI config
+```
 
-Complexity is revealed only when needed.
+Review the generated workflows like any other PR. The workflow files are version-controlled alongside the config they produce.
 
-**Result:** Users aren’t overwhelmed, regardless of experience level.
+### 4. Use the workflow
 
----
+Invoke the workflow from your target repo:
 
-### 4. Context-Driven Guidance
+```
+@onboard-chart.md
+```
 
-The agent explores the repository to find:
-
-* Existing examples
-* Schemas
-* Conventions
-* Related files and dependencies
-
-**Result:** Output matches real patterns, not idealized ones.
-
----
-
-### 5. Validation at Every Step
-
-Validation happens continuously, not only in CI.
-
-**Result:** Errors are caught early, when they’re cheapest to fix.
-
----
-
-## Execution Model
-
-Directed Workflows follow a **turn-based interaction loop**:
-
-1. Agent asks for information or presents options
-2. User responds
-3. Agent processes input and explores context
-4. Agent performs actions and validates results
-5. Agent confirms completion and moves forward
-
-Errors trigger clarification, examples, or fallback guidance—not failure.
+The agent asks questions, inspects your repo, and generates valid configuration. Come back next week, invoke the same file, and it picks up where you left off.
 
 ---
 
-## Example Use Cases
+## Why
 
-* RBAC configuration
-* Alert routing setup
-* Service onboarding
-* Infrastructure migrations
-* Compliance-sensitive changes
-* Cross-system coordination (Git, Jira, Vault, etc.)
+Every mature platform develops a configuration layer that's too complex for casual contributors. The documentation exists. The gap between reading it and producing valid configuration is where mistakes happen.
 
-<!-- Concrete examples live in the `/examples` directory. -->
+| Existing Tool | Limitation |
+|---------------|-----------|
+| Developer portals (Backstage) | Require building/maintaining a web app. Good at creation-time, not multi-step. |
+| Template generators (Cookiecutter) | One-shot. No conditional logic, no existing-state inspection. |
+| Documentation | Tells you what to do but can't do it with you. |
+| Raw AI assistants | Hallucinate resource names, invent conventions, guess values. |
 
----
+Directed workflows close this gap. The workflow file is the program. The AI agent is the runtime.
 
-## Tool Compatibility
+## Key Concepts
 
-This pattern is designed to work with **existing agentic tools**, including:
+### Design Principles
 
-* IDE-embedded agents
-* Repository-aware assistants
-* MCP-enabled integrations (Git, issue trackers, CI, etc.)
+Every workflow defines a behavioral contract: who owns the configuration, where the source of truth lives, what the agent should derive vs ask, and whether to default to simple or complex. This prevents the agent from guessing values, deferring work to the wrong party, or over-engineering the output.
 
-No custom runtime required.
+#### Inspect-Decide-Generate
 
----
+Every step follows the same cycle: inspect the repo and prior phase outputs to derive what you can, present the user with options and defaults for decisions that can't be derived, generate config using existing files as reference over hard-coded templates.
 
-## Why This Works
+#### Carry-Forward Data
 
-Directed Workflows succeed where docs, scripts, and wizards fail because they:
+Each phase declares what it inherits from prior phases -- identifiers, paths, environment names. The agent uses these directly instead of re-asking. As phases progress, the carry-forward list grows.
 
-* Preserve human judgment
-* Encode expertise without freezing it
-* Adapt to context and variation
-* Validate continuously
-* Live alongside the code they operate on
+#### Status-Action Tables
 
-They scale *understanding*, not just execution.
+Conditional logic encoded as lookup tables, not prose. Unambiguous for both humans and agents.
 
----
+### Multi-Phase Router
 
-## Provenance
+For processes that span multiple sessions and PRs, a router file detects progress from the **merged upstream primary branch** and routes to the correct phase. No external state tracking -- the merged default branch *is* the state. Before each session, sync your fork and rebase onto upstream `main` (or pull if on a direct clone). Local uncommitted files, unmerged branches, and prior session history are explicitly excluded from detection. A PR merge is the event that advances the state machine.
 
-This pattern was developed through real-world use in complex infrastructure environments and is published here for community use, iteration, and extension.
+### The Substitution Property
+
+Workflow files specify *what information is needed*, not *who answers*. The same file works whether a human, an orchestrating agent, or a policy engine provides the inputs.
+
+## Repository Structure
+
+```
+directed-workflows/
+├── README.md                          # You are here (includes router pattern deep-dive)
+├── AGENTS.md                          # Agent instructions for generating workflows
+├── examples/
+│   ├── kubernetes-onboarding/         # 4-phase example (full router demo)
+│   │   ├── onboard-service.md         # Router (entry point)
+│   │   └── onboard-service/
+│   │       ├── phase-1-foundation.md  # Namespace, RBAC
+│   │       ├── phase-2-workload.md    # Deployment, Service
+│   │       ├── phase-3-exposure.md    # Ingress, NetworkPolicy (skippable)
+│   │       └── phase-4-observability.md # ServiceMonitor
+│   ├── terraform-aws-account/         # 3-phase example (HCL generation)
+│   │   ├── provision-account.md       # Router (entry point)
+│   │   └── provision-account/
+│   │       ├── phase-1-provider.md    # AWS provider, version constraints
+│   │       ├── phase-2-state.md       # S3 backend, DynamoDB lock (skippable)
+│   │       └── phase-3-iam.md         # IAM baseline roles, outputs
+│   ├── ansible-inventory/             # 3-phase example (inventory + playbook)
+│   │   ├── add-host-group.md          # Router (entry point)
+│   │   └── add-host-group/
+│   │       ├── phase-1-inventory.md   # Add hosts to environment inventory
+│   │       ├── phase-2-group-vars.md  # Group variables, vault secrets
+│   │       └── phase-3-playbook.md    # Playbook with roles
+│   └── contributor-access/            # 2-phase example (minimal router)
+│       ├── grant-access.md            # Router (entry point)
+│       └── grant-access/
+│           ├── phase-1-identity.md    # User file, team membership
+│           └── phase-2-access.md      # Roles, repo permissions
+└── templates/
+    ├── single-file-workflow.md        # Starter template for simple workflows
+    └── multi-phase-router/            # Starter template for router workflows
+        ├── router.md
+        └── phase-template.md
+```
+
+### Try the examples
+
+To see the pattern in action before creating your own, run any of the included examples:
+
+| Example | Command | Phases |
+|---------|---------|--------|
+| Kubernetes service onboarding | `@examples/kubernetes-onboarding/onboard-service.md` | 4 |
+| Terraform AWS account provisioning | `@examples/terraform-aws-account/provision-account.md` | 3 |
+| Ansible inventory setup | `@examples/ansible-inventory/add-host-group.md` | 3 |
+| Contributor access management | `@examples/contributor-access/grant-access.md` | 2 |
+
+### Write one manually
+
+If you prefer to write workflows by hand:
+
+1. Copy `templates/single-file-workflow.md` (one session) or `templates/multi-phase-router/` (multi-session)
+2. Fill in the Inspect/Decide/Generate steps for your process
+3. Drop it in your repo at `.agents/commands/`
+
+## IDE Integration
+
+Directed workflows work with any AI IDE that supports referencing files. Place workflows in `.agents/commands/` and symlink to tool-specific directories:
+
+```bash
+# Cursor
+ln -s ../../.agents/commands/onboard-service.md .cursor/commands/onboard-service.md
+
+# Claude Code
+ln -s ../../.agents/commands/onboard-service.md .claude/commands/onboard-service.md
+```
+
+One source of truth, multiple entry points.
+
+## Works With
+
+| Platform | Example Use Case |
+|----------|-----------------|
+| **Kubernetes** | Service onboarding, namespace setup, monitoring ([example](examples/kubernetes-onboarding/onboard-service.md)) |
+| **Terraform** | AWS account provisioning, module creation, environment setup ([example](examples/terraform-aws-account/provision-account.md)) |
+| **Ansible** | Inventory management, host group setup, playbook wiring ([example](examples/ansible-inventory/add-host-group.md)) |
+| **ArgoCD** | Application onboarding, sync policy setup |
+| **Crossplane** | XRD/Composition authoring |
+| **Helm** | Chart scaffolding, multi-env values |
+| **Any GitOps repo** | Any file-based config with placement conventions |
+
+## How It Compares
+
+| Approach | Resumable | Modular | Fits Context Window | Small PRs | Zero Infra |
+|----------|-----------|---------|---------------------|-----------|------------|
+| Single monolithic prompt | No | No | No | No | Yes |
+| Backstage scaffolder | No | Partial | N/A | No | No |
+| External workflow engine | Yes | Depends | Depends | Depends | No |
+| **Directed Workflows** | **Yes** | **Yes** | **Yes** | **Yes** | **Yes** |
+
+## Further Reading
+
+- [The Multi-Phase Router Pattern](./ROUTER_PATTERN.md)
+- [AGENTS.md](AGENTS.md) -- instructions the agent reads when generating workflows for your repo
+- [Agent Skills Standard](https://agentskills.io/) -- the adjacent open standard for single-invocation agent capabilities
+
+## License
+
+Apache 2.0
+
+## Author
+
+Tyler Pate ([@TGPSKI(https://github.com/tgpski)), 2026
