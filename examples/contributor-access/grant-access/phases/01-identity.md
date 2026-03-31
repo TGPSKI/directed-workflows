@@ -4,7 +4,7 @@ description: "Phase 1: Identity -- Create user file and add to team"
 metadata:
   author: platform-team
   version: "2.0"
-parent: grant-access.md
+parent: grant-access
 ---
 
 # Phase 1: Identity
@@ -118,4 +118,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with access and permissions:
 
-`@grant-access/phase-2-access.md`
+`@grant-access/phases/02-access.md`

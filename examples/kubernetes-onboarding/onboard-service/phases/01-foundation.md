@@ -4,7 +4,7 @@ description: "Phase 1: Foundation -- Namespace and RBAC setup for a new service"
 metadata:
   author: platform-team
   version: "2.0"
-parent: onboard-service.md
+parent: onboard-service
 ---
 
 # Phase 1: Foundation
@@ -162,4 +162,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with workload deployment:
 
-`@onboard-service/phase-2-workload.md`
+`@onboard-service/phases/02-workload.md`

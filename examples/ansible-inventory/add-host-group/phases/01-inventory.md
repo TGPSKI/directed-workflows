@@ -4,7 +4,7 @@ description: "Phase 1: Inventory -- Add host(s) to the environment inventory"
 metadata:
   author: platform-team
   version: "2.0"
-parent: add-host-group.md
+parent: add-host-group
 ---
 
 # Phase 1: Inventory
@@ -118,4 +118,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with group variables and secrets:
 
-`@add-host-group/phase-2-group-vars.md`
+`@add-host-group/phases/02-group-vars.md`

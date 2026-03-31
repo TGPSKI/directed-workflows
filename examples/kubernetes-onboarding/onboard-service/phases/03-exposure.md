@@ -4,7 +4,7 @@ description: "Phase 3: Exposure -- Ingress and NetworkPolicy for external HTTP a
 metadata:
   author: platform-team
   version: "2.0"
-parent: onboard-service.md
+parent: onboard-service
 ---
 
 # Phase 3: Exposure
@@ -31,7 +31,7 @@ Configure external HTTP access via Ingress and a NetworkPolicy for the ingress c
 
 | Answer | Action |
 |--------|--------|
-| No -- internal only | Skip this phase. Continue with `@onboard-service/phase-4-observability.md` |
+| No -- internal only | Skip this phase. Continue with `@onboard-service/phases/04-observability.md` |
 | Yes -- external HTTP | Continue below |
 
 ---
@@ -159,4 +159,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with observability:
 
-`@onboard-service/phase-4-observability.md`
+`@onboard-service/phases/04-observability.md`
