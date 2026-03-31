@@ -4,7 +4,7 @@ description: "Phase N: [Phase Name] -- Short description of what this phase prod
 metadata:
   author: your-team
   version: "1.0"
-parent: your-workflow-name.md         # Links back to the router
+parent: SKILL.md                     # Links back to the router
 ---
 
 # Phase N: [Phase Name]
