@@ -35,9 +35,10 @@ Use when the process spans multiple sessions or produces multiple PRs.
 ```
 .agents/skills/{workflow-name}/
 ├── SKILL.md                        # Router (entry point, no generation)
-├── phase-1-{name}.md               # Phase module
-├── phase-2-{name}.md               # Phase module
-└── phase-3-{name}.md               # Phase module
+└── phases/
+    ├── 01-{name}.md                # Phase module
+    ├── 02-{name}.md                # Phase module
+    └── 03-{name}.md                # Phase module
 ```
 
 | Characteristic | Single-file | Multi-phase router |
@@ -62,10 +63,12 @@ description: "What this workflow does and when to use it"
 metadata:
   author: team-name
   version: "1.0"
-parent: SKILL.md                # Phase files only
-compatibility: "Required tools"  # Router and single-file only
+parent: workflow-name              # Phase files only -- matches the router's name field
+compatibility: "Required tools"    # Router and single-file only
 ---
 ```
+
+The `parent` field on phase files references the `name` from the router's frontmatter, not a filename. This lets the agent trace any phase back to its router unambiguously.
 
 ### Inspect-Decide-Generate
 
@@ -147,7 +150,8 @@ The router MUST include:
 ### Phase Module Rules
 
 Each phase:
-- Declares `parent:` in frontmatter linking back to the router
+- Declares `parent:` in frontmatter (matching the router's `name` field)
+- Lives in the `phases/` subdirectory of the workflow
 - Is independently invocable
 - Follows Inspect-Decide-Generate for every step
 - Ends with a **PR Checkpoint** listing exact files to include
@@ -216,7 +220,7 @@ Each phase should:
 
 ### Step 4: Generate the Workflow Files
 
-Write files to `.agents/skills/{workflow-name}/` in the user's workspace. Study the examples in the skill directory:
+Write files to `.agents/skills/{workflow-name}/` in the user's workspace. For multi-phase routers, place phase files in a `phases/` subdirectory. Study the examples in the skill directory:
 
 | Example | Phases | Good reference for |
 |---------|--------|--------------------|
@@ -229,13 +233,10 @@ Use `templates/single-file-workflow.md` or `templates/multi-phase-router/` as th
 
 ### Step 5: Enable IDE Discovery
 
-Create symlinks from IDE-specific directories to the canonical location:
+Create symlinks from IDE-specific directories to the canonical location. Adapt the target path to whatever IDE the user has:
 
 ```bash
-# Cursor
 ln -s ../../.agents/skills/{workflow-name} .cursor/skills/{workflow-name}
-
-# Claude Code
 ln -s ../../.agents/skills/{workflow-name} .claude/skills/{workflow-name}
 ```
 

@@ -1,10 +1,10 @@
 ---
-name: your-workflow-name-phase-N
+name: your-workflow-name-phase-NN
 description: "Phase N: [Phase Name] -- Short description of what this phase produces"
 metadata:
   author: your-team
   version: "1.0"
-parent: SKILL.md                     # Links back to the router
+parent: your-workflow-name           # Matches the router's name field
 ---
 
 # Phase N: [Phase Name]
@@ -40,7 +40,7 @@ One-line summary of what this phase produces.
 
 **Generate**:
 
-Prefer referencing existing files in the repo (schemas, examples, prior configurations) over hard-coded templates. Inline markup drifts from the actual source of truth over time. Use it only as minimal annotation or when no existing reference exists.
+Prefer referencing existing files in the repo (schemas, examples, prior configurations) over hard-coded templates.
 
 ```yaml
 # Your generated configuration here -- or reference an existing file:
@@ -86,4 +86,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 After the PR is merged, start a new session and invoke the router. It will detect Phase N as complete and route to:
 
-`@your-workflow-name/phase-N+1-name.md`
+`@your-workflow-name/phases/NN+1-name.md`

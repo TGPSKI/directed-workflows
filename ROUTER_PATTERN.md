@@ -16,10 +16,11 @@ The Multi-Phase Router splits a workflow into a router and phase modules:
 ```
 .agents/skills/onboard-service/
 ├── SKILL.md                           # Router (entry point)
-├── phase-1-foundation.md              # Phase module
-├── phase-2-workload.md                # Phase module
-├── phase-3-exposure.md                # Phase module (skippable)
-└── phase-4-observability.md           # Phase module
+└── phases/
+    ├── 01-foundation.md               # Phase module
+    ├── 02-workload.md                 # Phase module
+    ├── 03-exposure.md                 # Phase module (skippable)
+    └── 04-observability.md            # Phase module
 ```
 
 ### The Router
@@ -57,15 +58,15 @@ The router never generates files itself. Pure orchestration.
 
 ### Phase Modules
 
-Each phase is a self-contained workflow file that:
+Each phase is a self-contained workflow file in the `phases/` subdirectory that:
 
-- **Declares its parent** via frontmatter (`parent: SKILL.md`)
+- **Declares its parent** via frontmatter (`parent: onboard-service` -- the router's `name` field)
 - **Declares carry-forward data** -- what it inherits from prior phases so the agent doesn't re-ask
 - **Covers a logical grouping** of steps (a coherent unit of work, not a single step)
 - **Ends with a PR checkpoint** specifying exactly which files to include
 - **Links to the next phase**
 
-Each phase is independently invocable. A user who already has their service deployed can jump straight to `@onboard-service/phase-4-observability.md` without touching the router.
+Each phase is independently invocable. A user who already has their service deployed can jump straight to `@onboard-service/phases/04-observability.md` without touching the router.
 
 ### Progress Detection
 
@@ -100,17 +101,26 @@ The detection is also **self-healing**. If someone manually creates a file outsi
 
 ```yaml
 ---
-name: workflow-name           # Unique identifier
-description: "..."            # Human-readable purpose
+name: onboard-service            # Unique identifier (router)
+description: "..."               # Human-readable purpose
 metadata:
   author: team-name
   version: "1.0"
-parent: SKILL.md              # Only on phase files
-compatibility: "..."          # Tool/dependency requirements
+compatibility: "..."             # Tool/dependency requirements
 ---
 ```
 
-The `parent` field creates a navigable hierarchy. An agent encountering a phase file in isolation can trace back to the router.
+Phase files reference their router by name, not filename:
+
+```yaml
+---
+name: onboard-service-phase-01
+description: "..."
+parent: onboard-service          # Matches the router's name field
+---
+```
+
+This lets the agent trace any phase back to its router unambiguously, even when every router is named `SKILL.md`.
 
 ### Inspect-Decide-Generate
 
@@ -185,7 +195,7 @@ Keep it short (under 150 lines). Start with a Design Principles section defining
 
 ### 4. Write Phase Modules
 
-Each module should:
+Place phase files in the `phases/` subdirectory. Each module should:
 - Declare what data it carries forward from prior phases
 - Be independently invocable
 - Derive values from the repo before asking the user

@@ -22,19 +22,15 @@ The workflow file is the program. The AI agent is the runtime.
 
 ### 1. Get the skill into your agent's scope
 
-**Any AI IDE** -- add to your workspace:
+Clone this repo and add it to your workspace alongside your target repo:
 
 ```bash
 git clone https://github.com/tgpski/directed-workflows.git
 ```
 
-Add both this repo and your target repo to the same workspace. The agent reads `AGENTS.md` → `SKILL.md` for instructions.
+The agent reads `AGENTS.md` → `SKILL.md` for instructions. Most AI IDEs (Cursor, Claude Code, Windsurf, etc.) pick up `AGENTS.md` or `SKILL.md` automatically when the repo is in the workspace.
 
-**Cursor** -- install as a global skill (available in every workspace):
-
-```bash
-git clone https://github.com/tgpski/directed-workflows.git ~/.cursor/skills/directed-workflows
-```
+If your IDE supports global skill installation (e.g. `~/.cursor/skills/`, `~/.claude/skills/`), you can clone there instead for availability across all workspaces.
 
 ### 2. Ask the agent to create a workflow
 
@@ -55,18 +51,16 @@ The agent writes files to `.agents/skills/` in your repo:
 ```
 your-repo/.agents/skills/onboard-chart/
 ├── SKILL.md                        # Router (entry point)
-├── phase-1-scaffold.md             # Chart.yaml, base values
-├── phase-2-environments.md         # Per-env values files
-└── phase-3-pipeline.md             # CI config
+└── phases/
+    ├── 01-scaffold.md              # Chart.yaml, base values
+    ├── 02-environments.md          # Per-env values files
+    └── 03-pipeline.md              # CI config
 ```
 
-Symlink for IDE auto-discovery:
+Symlink for IDE auto-discovery (adapt the target path to your IDE):
 
 ```bash
-# Cursor
 ln -s ../../.agents/skills/onboard-chart .cursor/skills/onboard-chart
-
-# Claude Code
 ln -s ../../.agents/skills/onboard-chart .claude/skills/onboard-chart
 ```
 
@@ -111,7 +105,7 @@ Workflow files specify *what information is needed*, not *who answers*. The same
 ```
 directed-workflows/
 ├── SKILL.md                           # Agent instructions for generating workflows
-├── AGENTS.md                          # Redirect to SKILL.md (for non-Cursor IDEs)
+├── AGENTS.md                          # Redirect to SKILL.md
 ├── README.md                          # You are here
 ├── ROUTER_PATTERN.md                  # Multi-phase router deep-dive
 ├── examples/
@@ -144,6 +138,7 @@ directed-workflows/
 Workflows live in `.agents/skills/` -- tool-agnostic and version-controlled. Symlink into IDE-specific directories for auto-discovery:
 
 ```bash
+# Adapt paths to your IDE's skill/agent directory
 ln -s ../../.agents/skills/onboard-service .cursor/skills/onboard-service
 ln -s ../../.agents/skills/onboard-service .claude/skills/onboard-service
 ```
