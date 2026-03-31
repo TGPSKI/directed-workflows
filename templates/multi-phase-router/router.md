@@ -1,5 +1,5 @@
 ---
-name: your-workflow-name              # Unique identifier, used as the command name
+name: your-workflow-name              # Unique identifier, used as the skill name
 description: "Short description. This is the router -- it detects progress and routes to phases."
 metadata:
   author: your-team

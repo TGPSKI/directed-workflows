@@ -1,107 +1,106 @@
 # Directed Workflows
 
-**Markdown files that turn AI coding agents into interactive platform experts.**
-
-Directed workflows encode multi-step configuration processes -- onboarding a service, setting up monitoring, migrating environments -- as markdown files that AI agents execute interactively. The agent asks questions, inspects your repo, and generates valid configuration. The human provides the inputs that require judgment.
+Structured markdown files that AI agents execute interactively. The agent asks questions, inspects your repo, and generates valid configuration. You provide the decisions.
 
 ```
-User: @onboard-service.md
+User: @onboard-service/SKILL.md
 
 Agent: "What is the name of your service?"
 User: "payment-gateway"
 
 Agent: [inspects repo]
-       "Namespace exists, no Deployment found. You're at Phase 2. Continue?"
+       "Namespace exists, no Deployment found. Phase 2. Continue?"
 User: "Yes"
 
 Agent: [generates Deployment, Service, Ingress YAML; validates locally]
-       "Resources created and validated. Ready for PR."
+       "Files created and validated. Ready for PR."
 ```
+
+The workflow file is the program. The AI agent is the runtime.
 
 ## Quick Start
 
-### 1. Clone and add to your workspace
+### 1. Get the skill into your agent's scope
+
+**Any AI IDE** -- add to your workspace:
 
 ```bash
 git clone https://github.com/tgpski/directed-workflows.git
 ```
 
-Open your AI IDE (Cursor, VS Code with Claude/Copilot, Windsurf) and add **both** this repo and your target repo to the same workspace.
+Add both this repo and your target repo to the same workspace. The agent reads `AGENTS.md` → `SKILL.md` for instructions.
+
+**Cursor** -- install as a global skill (available in every workspace):
+
+```bash
+git clone https://github.com/tgpski/directed-workflows.git ~/.cursor/skills/directed-workflows
+```
 
 ### 2. Ask the agent to create a workflow
 
-Start a new agent session and describe the process you want to encode:
+Start a new agent session in your target repo:
 
 ```
 I want a directed workflow for onboarding new Helm charts to our platform.
 The process takes about a week, produces 3 PRs, and involves creating a
 Chart.yaml, values files per environment, and a CI pipeline config.
-Use the directed-workflows repo as the pattern reference.
 ```
 
-The agent reads `AGENTS.md`, studies the examples and templates, analyzes your repo's structure, and generates workflow files tailored to your conventions.
+The agent studies the examples and templates, analyzes your repo, and generates workflow files matching your conventions.
 
-### 3. Review the output
+### 3. Review and use
 
-The agent creates files in your target repo:
-
-```
-your-repo/.agents/commands/
-├── onboard-chart.md                # Router (entry point)
-└── onboard-chart/
-    ├── phase-1-scaffold.md         # Chart.yaml, base values
-    ├── phase-2-environments.md     # Per-env values files
-    └── phase-3-pipeline.md         # CI config
-```
-
-Review the generated workflows like any other PR. The workflow files are version-controlled alongside the config they produce.
-
-### 4. Use the workflow
-
-Invoke the workflow from your target repo:
+The agent writes files to `.agents/skills/` in your repo:
 
 ```
-@onboard-chart.md
+your-repo/.agents/skills/onboard-chart/
+├── SKILL.md                        # Router (entry point)
+├── phase-1-scaffold.md             # Chart.yaml, base values
+├── phase-2-environments.md         # Per-env values files
+└── phase-3-pipeline.md             # CI config
 ```
 
-The agent asks questions, inspects your repo, and generates valid configuration. Come back next week, invoke the same file, and it picks up where you left off.
+Symlink for IDE auto-discovery:
+
+```bash
+# Cursor
+ln -s ../../.agents/skills/onboard-chart .cursor/skills/onboard-chart
+
+# Claude Code
+ln -s ../../.agents/skills/onboard-chart .claude/skills/onboard-chart
+```
+
+Invoke the workflow: `@onboard-chart/SKILL.md`. Come back next week, invoke the same file, and it picks up where you left off.
 
 ---
 
-## Why
+## How It Works
 
-Every mature platform develops a configuration layer that's too complex for casual contributors. The documentation exists. The gap between reading it and producing valid configuration is where mistakes happen.
+### Inspect-Decide-Generate
 
-| Existing Tool | Limitation |
-|---------------|-----------|
-| Developer portals (Backstage) | Require building/maintaining a web app. Good at creation-time, not multi-step. |
-| Template generators (Cookiecutter) | One-shot. No conditional logic, no existing-state inspection. |
-| Documentation | Tells you what to do but can't do it with you. |
-| Raw AI assistants | Hallucinate resource names, invent conventions, guess values. |
+Every step follows the same cycle:
 
-Directed workflows close this gap. The workflow file is the program. The AI agent is the runtime.
+1. **Inspect** the repo -- schemas, existing files, prior phase outputs. Derive everything possible before involving the user.
+2. **Decide** -- present options and defaults. Ask only for information that can't be derived.
+3. **Generate** config using existing files as reference. Prefer repo patterns over hard-coded templates.
 
-## Key Concepts
+### Status-Action Tables
 
-### Design Principles
+Conditional logic is encoded as lookup tables, not prose. Tables are unambiguous for both humans and agents.
 
-Every workflow defines a behavioral contract: who owns the configuration, where the source of truth lives, what the agent should derive vs ask, and whether to default to simple or complex. This prevents the agent from guessing values, deferring work to the wrong party, or over-engineering the output.
-
-#### Inspect-Decide-Generate
-
-Every step follows the same cycle: inspect the repo and prior phase outputs to derive what you can, present the user with options and defaults for decisions that can't be derived, generate config using existing files as reference over hard-coded templates.
-
-#### Carry-Forward Data
-
-Each phase declares what it inherits from prior phases -- identifiers, paths, environment names. The agent uses these directly instead of re-asking. As phases progress, the carry-forward list grows.
-
-#### Status-Action Tables
-
-Conditional logic encoded as lookup tables, not prose. Unambiguous for both humans and agents.
+```markdown
+| Status | Action |
+|--------|--------|
+| Namespace exists, labels match | Skip to next step |
+| Namespace exists, labels outdated | Update labels |
+| Namespace missing | Create namespace |
+```
 
 ### Multi-Phase Router
 
-For processes that span multiple sessions and PRs, a router file detects progress from the **merged upstream primary branch** and routes to the correct phase. No external state tracking -- the merged default branch *is* the state. Before each session, sync your fork and rebase onto upstream `main` (or pull if on a direct clone). Local uncommitted files, unmerged branches, and prior session history are explicitly excluded from detection. A PR merge is the event that advances the state machine.
+For processes that span multiple sessions and PRs, a router file detects progress from the **merged primary branch** and routes to the correct phase. The merged default branch *is* the state -- no database, no session store, no external tracking. A PR merge advances the state machine.
+
+See [The Multi-Phase Router Pattern](./ROUTER_PATTERN.md) for the full deep-dive.
 
 ### The Substitution Property
 
@@ -111,99 +110,60 @@ Workflow files specify *what information is needed*, not *who answers*. The same
 
 ```
 directed-workflows/
-├── README.md                          # You are here (includes router pattern deep-dive)
-├── AGENTS.md                          # Agent instructions for generating workflows
+├── SKILL.md                           # Agent instructions for generating workflows
+├── AGENTS.md                          # Redirect to SKILL.md (for non-Cursor IDEs)
+├── README.md                          # You are here
+├── ROUTER_PATTERN.md                  # Multi-phase router deep-dive
 ├── examples/
-│   ├── kubernetes-onboarding/         # 4-phase example (full router demo)
-│   │   ├── onboard-service.md         # Router (entry point)
-│   │   └── onboard-service/
-│   │       ├── phase-1-foundation.md  # Namespace, RBAC
-│   │       ├── phase-2-workload.md    # Deployment, Service
-│   │       ├── phase-3-exposure.md    # Ingress, NetworkPolicy (skippable)
-│   │       └── phase-4-observability.md # ServiceMonitor
-│   ├── terraform-aws-account/         # 3-phase example (HCL generation)
-│   │   ├── provision-account.md       # Router (entry point)
-│   │   └── provision-account/
-│   │       ├── phase-1-provider.md    # AWS provider, version constraints
-│   │       ├── phase-2-state.md       # S3 backend, DynamoDB lock (skippable)
-│   │       └── phase-3-iam.md         # IAM baseline roles, outputs
-│   ├── ansible-inventory/             # 3-phase example (inventory + playbook)
-│   │   ├── add-host-group.md          # Router (entry point)
-│   │   └── add-host-group/
-│   │       ├── phase-1-inventory.md   # Add hosts to environment inventory
-│   │       ├── phase-2-group-vars.md  # Group variables, vault secrets
-│   │       └── phase-3-playbook.md    # Playbook with roles
-│   └── contributor-access/            # 2-phase example (minimal router)
-│       ├── grant-access.md            # Router (entry point)
-│       └── grant-access/
-│           ├── phase-1-identity.md    # User file, team membership
-│           └── phase-2-access.md      # Roles, repo permissions
+│   ├── kubernetes-onboarding/         # 4-phase: namespace, deployment, ingress, monitoring
+│   ├── terraform-aws-account/         # 3-phase: provider, state backend, IAM
+│   ├── ansible-inventory/             # 3-phase: hosts, group_vars, playbook
+│   └── contributor-access/            # 2-phase: identity, permissions
 └── templates/
-    ├── single-file-workflow.md        # Starter template for simple workflows
-    └── multi-phase-router/            # Starter template for router workflows
-        ├── router.md
-        └── phase-template.md
+    ├── single-file-workflow.md        # One-session template
+    └── multi-phase-router/            # Multi-session template (router + phase)
 ```
 
 ### Try the examples
 
-To see the pattern in action before creating your own, run any of the included examples:
-
-| Example | Command | Phases |
-|---------|---------|--------|
+| Example | Entry point | Phases |
+|---------|-------------|--------|
 | Kubernetes service onboarding | `@examples/kubernetes-onboarding/onboard-service.md` | 4 |
-| Terraform AWS account provisioning | `@examples/terraform-aws-account/provision-account.md` | 3 |
-| Ansible inventory setup | `@examples/ansible-inventory/add-host-group.md` | 3 |
-| Contributor access management | `@examples/contributor-access/grant-access.md` | 2 |
+| Terraform AWS account | `@examples/terraform-aws-account/provision-account.md` | 3 |
+| Ansible inventory | `@examples/ansible-inventory/add-host-group.md` | 3 |
+| Contributor access | `@examples/contributor-access/grant-access.md` | 2 |
 
 ### Write one manually
 
-If you prefer to write workflows by hand:
-
 1. Copy `templates/single-file-workflow.md` (one session) or `templates/multi-phase-router/` (multi-session)
-2. Fill in the Inspect/Decide/Generate steps for your process
-3. Drop it in your repo at `.agents/commands/`
+2. Fill in the Inspect/Decide/Generate steps
+3. Place in your repo at `.agents/skills/{workflow-name}/SKILL.md`
 
-## IDE Integration
+## File Layout Convention
 
-Directed workflows work with any AI IDE that supports referencing files. Place workflows in `.agents/commands/` and symlink to tool-specific directories:
+Workflows live in `.agents/skills/` -- tool-agnostic and version-controlled. Symlink into IDE-specific directories for auto-discovery:
 
 ```bash
-# Cursor
-ln -s ../../.agents/commands/onboard-service.md .cursor/commands/onboard-service.md
-
-# Claude Code
-ln -s ../../.agents/commands/onboard-service.md .claude/commands/onboard-service.md
+ln -s ../../.agents/skills/onboard-service .cursor/skills/onboard-service
+ln -s ../../.agents/skills/onboard-service .claude/skills/onboard-service
 ```
-
-One source of truth, multiple entry points.
 
 ## Works With
 
-| Platform | Example Use Case |
-|----------|-----------------|
+Any system where configuration is file-based and follows placement conventions:
+
+| Platform | Example |
+|----------|---------|
 | **Kubernetes** | Service onboarding, namespace setup, monitoring ([example](examples/kubernetes-onboarding/onboard-service.md)) |
-| **Terraform** | AWS account provisioning, module creation, environment setup ([example](examples/terraform-aws-account/provision-account.md)) |
-| **Ansible** | Inventory management, host group setup, playbook wiring ([example](examples/ansible-inventory/add-host-group.md)) |
-| **ArgoCD** | Application onboarding, sync policy setup |
-| **Crossplane** | XRD/Composition authoring |
-| **Helm** | Chart scaffolding, multi-env values |
-| **Any GitOps repo** | Any file-based config with placement conventions |
-
-## How It Compares
-
-| Approach | Resumable | Modular | Fits Context Window | Small PRs | Zero Infra |
-|----------|-----------|---------|---------------------|-----------|------------|
-| Single monolithic prompt | No | No | No | No | Yes |
-| Backstage scaffolder | No | Partial | N/A | No | No |
-| External workflow engine | Yes | Depends | Depends | Depends | No |
-| **Directed Workflows** | **Yes** | **Yes** | **Yes** | **Yes** | **Yes** |
+| **Terraform** | Account provisioning, module creation ([example](examples/terraform-aws-account/provision-account.md)) |
+| **Ansible** | Inventory management, playbook wiring ([example](examples/ansible-inventory/add-host-group.md)) |
+| **Helm / ArgoCD / Crossplane** | Chart scaffolding, app onboarding, XRD authoring |
+| **Any GitOps repo** | File-based config with predictable directory structures |
 
 ## Further Reading
 
-- [The Multi-Phase Router Pattern](./ROUTER_PATTERN.md)
-- [AGENTS.md](AGENTS.md) -- instructions the agent reads when generating workflows for your repo
-- [Agent Skills Standard](https://agentskills.io/) -- the adjacent open standard for single-invocation agent capabilities
+- [The Multi-Phase Router Pattern](./ROUTER_PATTERN.md) -- codebase-as-state, progress detection, phase boundaries
+- [SKILL.md](SKILL.md) -- the instructions the agent reads when generating workflows
 
 ## License
 
@@ -211,4 +171,4 @@ Apache 2.0
 
 ## Author
 
-Tyler Pate ([@TGPSKI(https://github.com/tgpski)), 2026
+Tyler Pate ([@TGPSKI](https://github.com/tgpski)), 2026
