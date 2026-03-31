@@ -4,7 +4,7 @@ description: "Phase 2: Access -- Role assignment and repository permissions"
 metadata:
   author: platform-team
   version: "2.0"
-parent: grant-access.md
+parent: grant-access
 ---
 
 # Phase 2: Access

@@ -4,7 +4,7 @@ description: "Phase 3: IAM Baseline -- Admin and read-only roles, password polic
 metadata:
   author: platform-team
   version: "2.0"
-parent: provision-account.md
+parent: provision-account
 ---
 
 # Phase 3: IAM Baseline

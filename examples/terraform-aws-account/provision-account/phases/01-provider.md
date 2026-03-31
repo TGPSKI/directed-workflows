@@ -4,7 +4,7 @@ description: "Phase 1: Provider -- AWS provider configuration and Terraform vers
 metadata:
   author: platform-team
   version: "2.0"
-parent: provision-account.md
+parent: provision-account
 ---
 
 # Phase 1: Provider
@@ -153,8 +153,8 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with state backend configuration:
 
-`@provision-account/phase-2-state.md`
+`@provision-account/phases/02-state.md`
 
 If the state bucket already exists and is shared across accounts, skip to IAM baseline:
 
-`@provision-account/phase-3-iam.md`
+`@provision-account/phases/03-iam.md`

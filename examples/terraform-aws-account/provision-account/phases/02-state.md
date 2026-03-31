@@ -4,7 +4,7 @@ description: "Phase 2: State Backend -- S3 remote state with DynamoDB locking"
 metadata:
   author: platform-team
   version: "2.0"
-parent: provision-account.md
+parent: provision-account
 ---
 
 # Phase 2: State Backend
@@ -31,7 +31,7 @@ Configure the remote state backend so Terraform state is stored in S3 with Dynam
 
 | Answer | Action |
 |--------|--------|
-| Shared bucket exists, already configured | Skip this phase. Continue with `@provision-account/phase-3-iam.md` |
+| Shared bucket exists, already configured | Skip this phase. Continue with `@provision-account/phases/03-iam.md` |
 | Need to configure backend for this account | Continue below |
 
 ---
@@ -110,4 +110,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with IAM baseline:
 
-`@provision-account/phase-3-iam.md`
+`@provision-account/phases/03-iam.md`

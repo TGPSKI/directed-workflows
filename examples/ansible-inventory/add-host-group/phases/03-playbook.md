@@ -4,7 +4,7 @@ description: "Phase 3: Playbook -- Create the playbook targeting the host group 
 metadata:
   author: platform-team
   version: "2.0"
-parent: add-host-group.md
+parent: add-host-group
 ---
 
 # Phase 3: Playbook

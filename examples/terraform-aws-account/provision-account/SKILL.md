@@ -75,6 +75,6 @@ After getting the account alias, inspect the repository to determine what's alre
 
 | Phase | File | Description | PR |
 |-------|------|-------------|-----|
-| 1 | `@provision-account/phase-1-provider.md` | AWS provider, version constraints | 1 |
-| 2 | `@provision-account/phase-2-state.md` | S3 backend, DynamoDB lock table | 1 |
-| 3 | `@provision-account/phase-3-iam.md` | IAM baseline roles, outputs | 1 |
+| 1 | `@provision-account/phases/01-provider.md` | AWS provider, version constraints | 1 |
+| 2 | `@provision-account/phases/02-state.md` | S3 backend, DynamoDB lock table | 1 |
+| 3 | `@provision-account/phases/03-iam.md` | IAM baseline roles, outputs | 1 |

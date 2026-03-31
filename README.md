@@ -109,10 +109,22 @@ directed-workflows/
 ├── README.md                          # You are here
 ├── ROUTER_PATTERN.md                  # Multi-phase router deep-dive
 ├── examples/
-│   ├── kubernetes-onboarding/         # 4-phase: namespace, deployment, ingress, monitoring
-│   ├── terraform-aws-account/         # 3-phase: provider, state backend, IAM
-│   ├── ansible-inventory/             # 3-phase: hosts, group_vars, playbook
-│   └── contributor-access/            # 2-phase: identity, permissions
+│   ├── kubernetes-onboarding/
+│   │   └── onboard-service/           # 4-phase: namespace, deployment, ingress, monitoring
+│   │       ├── SKILL.md               # Router
+│   │       └── phases/
+│   ├── terraform-aws-account/
+│   │   └── provision-account/         # 3-phase: provider, state backend, IAM
+│   │       ├── SKILL.md
+│   │       └── phases/
+│   ├── ansible-inventory/
+│   │   └── add-host-group/            # 3-phase: hosts, group_vars, playbook
+│   │       ├── SKILL.md
+│   │       └── phases/
+│   └── contributor-access/
+│       └── grant-access/              # 2-phase: identity, permissions
+│           ├── SKILL.md
+│           └── phases/
 └── templates/
     ├── single-file-workflow.md        # One-session template
     └── multi-phase-router/            # Multi-session template (router + phase)
@@ -122,10 +134,10 @@ directed-workflows/
 
 | Example | Entry point | Phases |
 |---------|-------------|--------|
-| Kubernetes service onboarding | `@examples/kubernetes-onboarding/onboard-service.md` | 4 |
-| Terraform AWS account | `@examples/terraform-aws-account/provision-account.md` | 3 |
-| Ansible inventory | `@examples/ansible-inventory/add-host-group.md` | 3 |
-| Contributor access | `@examples/contributor-access/grant-access.md` | 2 |
+| Kubernetes service onboarding | `@examples/kubernetes-onboarding/onboard-service/SKILL.md` | 4 |
+| Terraform AWS account | `@examples/terraform-aws-account/provision-account/SKILL.md` | 3 |
+| Ansible inventory | `@examples/ansible-inventory/add-host-group/SKILL.md` | 3 |
+| Contributor access | `@examples/contributor-access/grant-access/SKILL.md` | 2 |
 
 ### Write one manually
 
@@ -149,9 +161,9 @@ Any system where configuration is file-based and follows placement conventions:
 
 | Platform | Example |
 |----------|---------|
-| **Kubernetes** | Service onboarding, namespace setup, monitoring ([example](examples/kubernetes-onboarding/onboard-service.md)) |
-| **Terraform** | Account provisioning, module creation ([example](examples/terraform-aws-account/provision-account.md)) |
-| **Ansible** | Inventory management, playbook wiring ([example](examples/ansible-inventory/add-host-group.md)) |
+| **Kubernetes** | Service onboarding, namespace setup, monitoring ([example](examples/kubernetes-onboarding/onboard-service/SKILL.md)) |
+| **Terraform** | Account provisioning, module creation ([example](examples/terraform-aws-account/provision-account/SKILL.md)) |
+| **Ansible** | Inventory management, playbook wiring ([example](examples/ansible-inventory/add-host-group/SKILL.md)) |
 | **Helm / ArgoCD / Crossplane** | Chart scaffolding, app onboarding, XRD authoring |
 | **Any GitOps repo** | File-based config with predictable directory structures |
 

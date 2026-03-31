@@ -4,7 +4,7 @@ description: "Phase 4: Observability -- ServiceMonitor for Prometheus metrics sc
 metadata:
   author: platform-team
   version: "2.0"
-parent: onboard-service.md
+parent: onboard-service
 ---
 
 # Phase 4: Observability

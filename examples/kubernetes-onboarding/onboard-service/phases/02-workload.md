@@ -4,7 +4,7 @@ description: "Phase 2: Workload -- Deployment and Service for a new service"
 metadata:
   author: platform-team
   version: "2.0"
-parent: onboard-service.md
+parent: onboard-service
 ---
 
 # Phase 2: Workload
@@ -171,8 +171,8 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 If the service needs external HTTP access, continue with exposure:
 
-`@onboard-service/phase-3-exposure.md`
+`@onboard-service/phases/03-exposure.md`
 
 If the service is internal only, skip to observability:
 
-`@onboard-service/phase-4-observability.md`
+`@onboard-service/phases/04-observability.md`

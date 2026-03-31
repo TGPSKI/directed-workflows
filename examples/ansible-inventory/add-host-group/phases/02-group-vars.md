@@ -4,7 +4,7 @@ description: "Phase 2: Group Variables -- Plain-text config and vault-encrypted 
 metadata:
   author: platform-team
   version: "2.0"
-parent: add-host-group.md
+parent: add-host-group
 ---
 
 # Phase 2: Group Variables
@@ -134,4 +134,4 @@ If vault file was created, verify it's encrypted (the file should start with `$A
 
 Continue with the playbook:
 
-`@add-host-group/phase-3-playbook.md`
+`@add-host-group/phases/03-playbook.md`
