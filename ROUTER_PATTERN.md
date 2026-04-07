@@ -16,7 +16,7 @@ The Multi-Phase Router splits a workflow into a router and phase modules:
 ```
 .agents/skills/onboard-service/
 ├── SKILL.md                           # Router (entry point)
-└── phases/
+└── references/
     ├── 01-foundation.md               # Phase module
     ├── 02-workload.md                 # Phase module
     ├── 03-exposure.md                 # Phase module (skippable)
@@ -58,7 +58,7 @@ The router never generates files itself. Pure orchestration.
 
 ### Phase Modules
 
-Each phase is a self-contained workflow file in the `phases/` subdirectory that:
+Each phase is a self-contained workflow file in the `references/` subdirectory that:
 
 - **Declares its parent** via frontmatter (`parent: onboard-service` -- the router's `name` field)
 - **Declares carry-forward data** -- what it inherits from prior phases so the agent doesn't re-ask
@@ -66,7 +66,7 @@ Each phase is a self-contained workflow file in the `phases/` subdirectory that:
 - **Ends with a PR checkpoint** specifying exactly which files to include
 - **Links to the next phase**
 
-Each phase is independently invocable. A user who already has their service deployed can jump straight to `@onboard-service/phases/04-observability.md` without touching the router.
+Each phase is independently invocable. A user who already has their service deployed can jump straight to `@onboard-service/references/04-observability.md` without touching the router.
 
 ### Progress Detection
 
@@ -195,7 +195,7 @@ Keep it short (under 150 lines). Start with a Design Principles section defining
 
 ### 4. Write Phase Modules
 
-Place phase files in the `phases/` subdirectory. Each module should:
+Place phase files in the `references/` subdirectory. Each module should:
 - Declare what data it carries forward from prior phases
 - Be independently invocable
 - Derive values from the repo before asking the user

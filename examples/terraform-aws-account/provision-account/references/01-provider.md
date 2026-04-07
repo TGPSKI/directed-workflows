@@ -153,8 +153,8 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with state backend configuration:
 
-`@provision-account/phases/02-state.md`
+`@provision-account/references/02-state.md`
 
 If the state bucket already exists and is shared across accounts, skip to IAM baseline:
 
-`@provision-account/phases/03-iam.md`
+`@provision-account/references/03-iam.md`

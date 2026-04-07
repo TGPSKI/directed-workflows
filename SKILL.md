@@ -35,7 +35,7 @@ Use when the process spans multiple sessions or produces multiple PRs.
 ```
 .agents/skills/{workflow-name}/
 ├── SKILL.md                        # Router (entry point, no generation)
-└── phases/
+└── references/
     ├── 01-{name}.md                # Phase module
     ├── 02-{name}.md                # Phase module
     └── 03-{name}.md                # Phase module
@@ -151,7 +151,7 @@ The router MUST include:
 
 Each phase:
 - Declares `parent:` in frontmatter (matching the router's `name` field)
-- Lives in the `phases/` subdirectory of the workflow
+- Lives in the `references/` subdirectory of the workflow
 - Is independently invocable
 - Follows Inspect-Decide-Generate for every step
 - Ends with a **PR Checkpoint** listing exact files to include
@@ -220,7 +220,7 @@ Each phase should:
 
 ### Step 4: Generate the Workflow Files
 
-Write files to `.agents/skills/{workflow-name}/` in the user's workspace. For multi-phase routers, place phase files in a `phases/` subdirectory. Study the examples in the skill directory:
+Write files to `.agents/skills/{workflow-name}/` in the user's workspace. For multi-phase routers, place phase files in a `references/` subdirectory. Study the examples in the skill directory:
 
 | Example | Phases | Good reference for |
 |---------|--------|--------------------|
