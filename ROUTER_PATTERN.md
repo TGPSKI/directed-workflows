@@ -17,10 +17,10 @@ The Multi-Phase Router splits a workflow into a router and phase modules:
 .agents/skills/onboard-service/
 ├── SKILL.md                           # Router (entry point)
 └── references/
-    ├── 01-foundation.md               # Phase module
-    ├── 02-workload.md                 # Phase module
-    ├── 03-exposure.md                 # Phase module (skippable)
-    └── 04-observability.md            # Phase module
+    ├── phase-01-foundation.md         # Phase module
+    ├── phase-02-workload.md           # Phase module
+    ├── phase-03-exposure.md           # Phase module (skippable)
+    └── phase-04-observability.md      # Phase module
 ```
 
 ### The Router
@@ -66,7 +66,7 @@ Each phase is a self-contained workflow file in the `references/` subdirectory t
 - **Ends with a PR checkpoint** specifying exactly which files to include
 - **Links to the next phase**
 
-Each phase is independently invocable. A user who already has their service deployed can jump straight to `@onboard-service/references/04-observability.md` without touching the router.
+Each phase is independently invocable. A user who already has their service deployed can jump straight to `references/phase-04-observability.md` without touching the router.
 
 ### Progress Detection
 

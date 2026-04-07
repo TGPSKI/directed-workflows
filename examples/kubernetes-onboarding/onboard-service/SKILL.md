@@ -73,7 +73,7 @@ After getting the service name, inspect the repository to determine what's alrea
 
 | Phase | File | Description | PR |
 |-------|------|-------------|-----|
-| 1 | `@onboard-service/references/01-foundation.md` | Namespace, RBAC | 1 |
-| 2 | `@onboard-service/references/02-workload.md` | Deployment, Service | 1 |
-| 3 | `@onboard-service/references/03-exposure.md` | Ingress, NetworkPolicy (skippable) | 1 |
-| 4 | `@onboard-service/references/04-observability.md` | ServiceMonitor for metrics scraping | 1 |
+| 1 | `references/phase-01-foundation.md` | Namespace, RBAC | 1 |
+| 2 | `references/phase-02-workload.md` | Deployment, Service | 1 |
+| 3 | `references/phase-03-exposure.md` | Ingress, NetworkPolicy (skippable) | 1 |
+| 4 | `references/phase-04-observability.md` | ServiceMonitor for metrics scraping | 1 |

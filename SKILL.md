@@ -36,9 +36,9 @@ Use when the process spans multiple sessions or produces multiple PRs.
 .agents/skills/{workflow-name}/
 ├── SKILL.md                        # Router (entry point, no generation)
 └── references/
-    ├── 01-{name}.md                # Phase module
-    ├── 02-{name}.md                # Phase module
-    └── 03-{name}.md                # Phase module
+    ├── phase-01-{name}.md          # Phase module
+    ├── phase-02-{name}.md          # Phase module
+    └── phase-03-{name}.md          # Phase module
 ```
 
 | Characteristic | Single-file | Multi-phase router |

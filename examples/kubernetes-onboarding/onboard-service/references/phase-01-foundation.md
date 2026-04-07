@@ -162,4 +162,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with workload deployment:
 
-`@onboard-service/references/02-workload.md`
+`references/phase-02-workload.md`

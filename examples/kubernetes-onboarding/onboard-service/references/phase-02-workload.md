@@ -171,8 +171,8 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 If the service needs external HTTP access, continue with exposure:
 
-`@onboard-service/references/03-exposure.md`
+`references/phase-03-exposure.md`
 
 If the service is internal only, skip to observability:
 
-`@onboard-service/references/04-observability.md`
+`references/phase-04-observability.md`
