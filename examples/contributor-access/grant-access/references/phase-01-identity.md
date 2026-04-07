@@ -118,4 +118,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with access and permissions:
 
-`@grant-access/references/02-access.md`
+`references/phase-02-access.md`

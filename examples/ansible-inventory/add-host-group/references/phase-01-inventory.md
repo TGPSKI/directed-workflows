@@ -118,4 +118,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with group variables and secrets:
 
-`@add-host-group/references/02-group-vars.md`
+`references/phase-02-group-vars.md`

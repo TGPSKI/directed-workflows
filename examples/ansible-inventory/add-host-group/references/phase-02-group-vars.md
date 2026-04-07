@@ -134,4 +134,4 @@ If vault file was created, verify it's encrypted (the file should start with `$A
 
 Continue with the playbook:
 
-`@add-host-group/references/03-playbook.md`
+`references/phase-03-playbook.md`

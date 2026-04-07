@@ -31,7 +31,7 @@ Configure the remote state backend so Terraform state is stored in S3 with Dynam
 
 | Answer | Action |
 |--------|--------|
-| Shared bucket exists, already configured | Skip this phase. Continue with `@provision-account/references/03-iam.md` |
+| Shared bucket exists, already configured | Skip this phase. Continue with `references/phase-03-iam.md` |
 | Need to configure backend for this account | Continue below |
 
 ---
@@ -110,4 +110,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with IAM baseline:
 
-`@provision-account/references/03-iam.md`
+`references/phase-03-iam.md`
