@@ -31,7 +31,7 @@ Configure external HTTP access via Ingress and a NetworkPolicy for the ingress c
 
 | Answer | Action |
 |--------|--------|
-| No -- internal only | Skip this phase. Continue with `@onboard-service/phases/04-observability.md` |
+| No -- internal only | Skip this phase. Continue with `@onboard-service/references/04-observability.md` |
 | Yes -- external HTTP | Continue below |
 
 ---
@@ -159,4 +159,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 Continue with observability:
 
-`@onboard-service/phases/04-observability.md`
+`@onboard-service/references/04-observability.md`

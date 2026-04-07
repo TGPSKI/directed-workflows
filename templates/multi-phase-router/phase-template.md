@@ -86,4 +86,4 @@ The next phase cannot begin until this PR is merged into the primary branch. Mer
 
 After the PR is merged, start a new session and invoke the router. It will detect Phase N as complete and route to:
 
-`@your-workflow-name/phases/NN+1-name.md`
+`@your-workflow-name/references/NN+1-name.md`

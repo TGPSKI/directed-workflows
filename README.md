@@ -51,7 +51,7 @@ The agent writes files to `.agents/skills/` in your repo:
 ```
 your-repo/.agents/skills/onboard-chart/
 ├── SKILL.md                        # Router (entry point)
-└── phases/
+└── references/
     ├── 01-scaffold.md              # Chart.yaml, base values
     ├── 02-environments.md          # Per-env values files
     └── 03-pipeline.md              # CI config
@@ -112,19 +112,19 @@ directed-workflows/
 │   ├── kubernetes-onboarding/
 │   │   └── onboard-service/           # 4-phase: namespace, deployment, ingress, monitoring
 │   │       ├── SKILL.md               # Router
-│   │       └── phases/
+│   │       └── references/
 │   ├── terraform-aws-account/
 │   │   └── provision-account/         # 3-phase: provider, state backend, IAM
 │   │       ├── SKILL.md
-│   │       └── phases/
+│   │       └── references/
 │   ├── ansible-inventory/
 │   │   └── add-host-group/            # 3-phase: hosts, group_vars, playbook
 │   │       ├── SKILL.md
-│   │       └── phases/
+│   │       └── references/
 │   └── contributor-access/
 │       └── grant-access/              # 2-phase: identity, permissions
 │           ├── SKILL.md
-│           └── phases/
+│           └── references/
 └── templates/
     ├── single-file-workflow.md        # One-session template
     └── multi-phase-router/            # Multi-session template (router + phase)

@@ -84,5 +84,5 @@ After getting the identifier, inspect the repository to determine what's already
 
 | Phase | File | Description | PR |
 |-------|------|-------------|-----|
-| 1 | `@your-workflow-name/phases/01-name.md` | [What Phase 1 does] | 1 |
-| 2 | `@your-workflow-name/phases/02-name.md` | [What Phase 2 does] | 1 |
+| 1 | `@your-workflow-name/references/01-name.md` | [What Phase 1 does] | 1 |
+| 2 | `@your-workflow-name/references/02-name.md` | [What Phase 2 does] | 1 |

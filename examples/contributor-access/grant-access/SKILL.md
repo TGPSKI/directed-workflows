@@ -65,5 +65,5 @@ After getting the username, inspect the repository to determine what's already b
 
 | Phase | File | Description | PR |
 |-------|------|-------------|-----|
-| 1 | `@grant-access/phases/01-identity.md` | User file, team membership | 1 |
-| 2 | `@grant-access/phases/02-access.md` | Role assignment, repo permissions | 1 |
+| 1 | `@grant-access/references/01-identity.md` | User file, team membership | 1 |
+| 2 | `@grant-access/references/02-access.md` | Role assignment, repo permissions | 1 |

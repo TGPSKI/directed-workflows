@@ -74,6 +74,6 @@ After getting the group name and environment, inspect the repository to determin
 
 | Phase | File | Description | PR |
 |-------|------|-------------|-----|
-| 1 | `@add-host-group/phases/01-inventory.md` | Add host(s) to environment inventory | 1 |
-| 2 | `@add-host-group/phases/02-group-vars.md` | Group variables, vault-encrypted secrets | 1 |
-| 3 | `@add-host-group/phases/03-playbook.md` | Playbook targeting the group with roles | 1 |
+| 1 | `@add-host-group/references/01-inventory.md` | Add host(s) to environment inventory | 1 |
+| 2 | `@add-host-group/references/02-group-vars.md` | Group variables, vault-encrypted secrets | 1 |
+| 3 | `@add-host-group/references/03-playbook.md` | Playbook targeting the group with roles | 1 |
