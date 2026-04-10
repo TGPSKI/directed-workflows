@@ -18,11 +18,24 @@ Open a GitHub issue describing the problem, including:
 3. Make your changes
 4. Submit a pull request against `main`
 
+### Agent Skills Specification
+
+All `SKILL.md` files must conform to the [Agent Skills specification](https://github.com/agentskills/agentskills/blob/1eeb1aab054a20e9b8508887e82bd911a29235c8/docs/specification.mdx).
+
+Required frontmatter fields:
+
+| Field | Constraints |
+|-------|-------------|
+| `name` | 1-64 chars, lowercase alphanumeric + hyphens, must match parent directory name |
+| `description` | 1-1024 chars, describes what the skill does and when to use it |
+
+Optional frontmatter fields: `license`, `compatibility`, `metadata`, `allowed-tools`.
+
 ### Workflow File Conventions
 
 When adding or modifying workflow examples:
 
-- Entry points are always `SKILL.md`
+- Entry points are always `SKILL.md` with valid YAML frontmatter per the spec above
 - Phase files live under `references/` and use `phase-0N-name.md` naming
 - The `parent` field references the router's name, not its filename
 - Follow the Inspect-Decide-Generate cycle in every step
@@ -51,7 +64,8 @@ Every PR must:
 
 1. Not break existing workflow file structure
 2. Follow the naming conventions documented in `ROUTER_PATTERN.md`
-3. Include a clear description of what the change does and why
+3. Conform to the [Agent Skills specification](https://github.com/agentskills/agentskills/blob/1eeb1aab054a20e9b8508887e82bd911a29235c8/docs/specification.mdx) — all `SKILL.md` files must have valid frontmatter with required `name` and `description` fields
+4. Include a clear description of what the change does and why
 
 ### Running Validation
 
