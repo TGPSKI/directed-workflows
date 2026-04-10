@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: >-
+      github.event_name == 'push' ||
+      github.event.action == 'opened' ||
+      contains(github.event.pull_request.labels.*.name, 'ok-to-test')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Verify SKILL.md entry points exist
+        run: |
+          FAIL=0
+          for dir in examples/*/; do
+            for workflow in "$dir"*/; do
+              if [ ! -f "${workflow}SKILL.md" ]; then
+                echo "::error::Missing SKILL.md in ${workflow}"
+                FAIL=1
+              fi
+            done
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "All example workflows have SKILL.md entry points"
+
+      # Agent Skills spec: https://github.com/agentskills/agentskills/blob/1eeb1aab054a20e9b8508887e82bd911a29235c8/docs/specification.mdx
+      - name: Validate SKILL.md frontmatter (Agent Skills spec)
+        run: |
+          FAIL=0
+          for skill in $(find . -name 'SKILL.md' -not -path './.git/*'); do
+            # Must start with YAML frontmatter delimiters
+            FIRST_LINE=$(head -1 "$skill")
+            if [ "$FIRST_LINE" != "---" ]; then
+              echo "::error::${skill}: missing YAML frontmatter (must start with ---)"
+              FAIL=1
+              continue
+            fi
+
+            # Extract frontmatter between first and second ---
+            FRONTMATTER=$(awk 'BEGIN{f=0} /^---$/{f++; if(f==2) exit; next} f==1{print}' "$skill")
+            if [ -z "$FRONTMATTER" ]; then
+              echo "::error::${skill}: empty or malformed frontmatter"
+              FAIL=1
+              continue
+            fi
+
+            # Required: name field
+            NAME=$(echo "$FRONTMATTER" | grep -E '^name:\s' | sed 's/^name:\s*//')
+            if [ -z "$NAME" ]; then
+              echo "::error::${skill}: missing required 'name' field in frontmatter"
+              FAIL=1
+            else
+              # name must be lowercase alphanumeric + hyphens, 1-64 chars
+              if ! echo "$NAME" | grep -qE '^[a-z0-9]([a-z0-9-]*[a-z0-9])?$'; then
+                echo "::error::${skill}: 'name' must be lowercase alphanumeric + hyphens, not start/end with hyphen: ${NAME}"
+                FAIL=1
+              fi
+              if [ ${#NAME} -gt 64 ]; then
+                echo "::error::${skill}: 'name' exceeds 64 character limit: ${NAME}"
+                FAIL=1
+              fi
+              # name must not contain consecutive hyphens
+              if echo "$NAME" | grep -qE '\-\-'; then
+                echo "::error::${skill}: 'name' must not contain consecutive hyphens: ${NAME}"
+                FAIL=1
+              fi
+              # name must match parent directory name
+              PARENT_DIR=$(basename "$(dirname "$skill")")
+              if [ "$NAME" != "$PARENT_DIR" ] && [ "$PARENT_DIR" != "." ]; then
+                echo "::warning::${skill}: 'name' (${NAME}) does not match parent directory (${PARENT_DIR})"
+              fi
+            fi
+
+            # Required: description field
+            DESC=$(echo "$FRONTMATTER" | grep -E '^description:\s' | sed 's/^description:\s*//')
+            if [ -z "$DESC" ]; then
+              echo "::error::${skill}: missing required 'description' field in frontmatter"
+              FAIL=1
+            else
+              if [ ${#DESC} -gt 1024 ]; then
+                echo "::error::${skill}: 'description' exceeds 1024 character limit"
+                FAIL=1
+              fi
+            fi
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "All SKILL.md files have valid frontmatter per Agent Skills spec"
+
+      - name: Verify references/ directories
+        run: |
+          FAIL=0
+          for skill in examples/*/*/SKILL.md; do
+            DIR=$(dirname "$skill")
+            if [ ! -d "${DIR}/references" ]; then
+              echo "::error::Missing references/ directory for ${skill}"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "All multi-phase workflows have references/ directories"
+
+      - name: Verify phase file naming convention
+        run: |
+          FAIL=0
+          for ref_dir in examples/*/*/references/; do
+            if [ -d "$ref_dir" ]; then
+              for f in "$ref_dir"*.md; do
+                [ -f "$f" ] || continue
+                BASENAME=$(basename "$f")
+                if ! echo "$BASENAME" | grep -qE '^phase-[0-9]+-[a-z0-9-]+\.md$'; then
+                  echo "::error::Phase file does not match phase-0N-name.md convention: ${f}"
+                  FAIL=1
+                fi
+              done
+            fi
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "All phase files follow naming convention"
+
+      - name: Check for broken internal references
+        run: |
+          FAIL=0
+          for md in $(find . -name '*.md' -not -path './.git/*'); do
+            while IFS= read -r ref; do
+              TARGET=$(echo "$ref" | sed 's/.*](//' | sed 's/).*//' | sed 's/#.*//')
+              [ -z "$TARGET" ] && continue
+              echo "$TARGET" | grep -qE '^https?://' && continue
+              echo "$TARGET" | grep -qE '^mailto:' && continue
+              DIR=$(dirname "$md")
+              if [ ! -e "${DIR}/${TARGET}" ] && [ ! -e "${TARGET}" ]; then
+                echo "::warning::Possibly broken link in ${md}: ${TARGET}"
+              fi
+            done < <(grep -oE '\[[^]]*\]\([^)]+\)' "$md" 2>/dev/null || true)
+          done
+          echo "Link check complete"

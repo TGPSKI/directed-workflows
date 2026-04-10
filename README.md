@@ -174,7 +174,7 @@ Any system where configuration is file-based and follows placement conventions:
 
 ## License
 
-Apache 2.0
+[GNU General Public License v3.0](./LICENSE)
 
 ## Author
 
