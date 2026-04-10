@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: >-
+      github.event_name == 'push' ||
+      github.event.action == 'opened' ||
+      contains(github.event.pull_request.labels.*.name, 'ok-to-test')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Verify SKILL.md entry points exist
+        run: |
+          FAIL=0
+          for dir in examples/*/; do
+            for workflow in "$dir"*/; do
+              if [ ! -f "${workflow}SKILL.md" ]; then
+                echo "::error::Missing SKILL.md in ${workflow}"
+                FAIL=1
+              fi
+            done
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "All example workflows have SKILL.md entry points"
+
+      - name: Verify references/ directories
+        run: |
+          FAIL=0
+          for skill in examples/*/*/SKILL.md; do
+            DIR=$(dirname "$skill")
+            if [ ! -d "${DIR}/references" ]; then
+              echo "::error::Missing references/ directory for ${skill}"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "All multi-phase workflows have references/ directories"
+
+      - name: Verify phase file naming convention
+        run: |
+          FAIL=0
+          for ref_dir in examples/*/*/references/; do
+            if [ -d "$ref_dir" ]; then
+              for f in "$ref_dir"*.md; do
+                [ -f "$f" ] || continue
+                BASENAME=$(basename "$f")
+                if ! echo "$BASENAME" | grep -qE '^phase-[0-9]+-[a-z0-9-]+\.md$'; then
+                  echo "::error::Phase file does not match phase-0N-name.md convention: ${f}"
+                  FAIL=1
+                fi
+              done
+            fi
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "All phase files follow naming convention"
+
+      - name: Check for broken internal references
+        run: |
+          FAIL=0
+          for md in $(find . -name '*.md' -not -path './.git/*'); do
+            while IFS= read -r ref; do
+              TARGET=$(echo "$ref" | sed 's/.*](//' | sed 's/).*//' | sed 's/#.*//')
+              [ -z "$TARGET" ] && continue
+              echo "$TARGET" | grep -qE '^https?://' && continue
+              echo "$TARGET" | grep -qE '^mailto:' && continue
+              DIR=$(dirname "$md")
+              if [ ! -e "${DIR}/${TARGET}" ] && [ ! -e "${TARGET}" ]; then
+                echo "::warning::Possibly broken link in ${md}: ${TARGET}"
+              fi
+            done < <(grep -oE '\[[^]]*\]\([^)]+\)' "$md" 2>/dev/null || true)
+          done
+          echo "Link check complete"
