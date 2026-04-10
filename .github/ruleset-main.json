@@ -19,6 +19,12 @@
       }
     },
     {
+      "type": "merge_queue",
+      "parameters": {
+        "merge_method": "squash"
+      }
+    },
+    {
       "type": "required_signatures"
     },
     {
